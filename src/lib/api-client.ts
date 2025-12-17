@@ -19,11 +19,14 @@ class ApiClient {
       ...headers,
     };
 
-    const response = await fetch(`http://localhost:3000/api/${endpoint}`, {
-      method,
-      headers: defaultHeaders,
-      body: body ? JSON.stringify(body) : undefined,
-    });
+    const response = await fetch(
+      `https://yourvideoworld.vercel.app//${endpoint}`,
+      {
+        method,
+        headers: defaultHeaders,
+        body: body ? JSON.stringify(body) : undefined,
+      }
+    );
 
     if (!response.ok) {
       console.log(response);
