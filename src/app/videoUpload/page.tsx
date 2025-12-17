@@ -30,7 +30,7 @@ function VideoUploadForm() {
         onSuccess={(res) => {
           console.log(res);
           setVideoUrl((res as { url: string }).url);
-          setThumbnailUrl(`${videoUrl}/ik-thumbnail.jpg`);
+          // setThumbnailUrl(`${videoUrl}/ik-thumbnail.jpg`);
         }}
       />
       <div className="max-w-lg mx-auto bg-white shadow-md rounded-lg p-6 space-y-6">

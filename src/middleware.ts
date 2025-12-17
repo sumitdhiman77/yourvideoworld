@@ -16,7 +16,10 @@ export default withAuth(
         ) {
           return true;
         }
-        if (pathname === "/" || pathname.startsWith("/api/videos")) {
+        if (
+          pathname === "/" ||
+          (pathname.startsWith("/api/videos") && req.method === "GET")
+        ) {
           return true;
         }
         return !!token;

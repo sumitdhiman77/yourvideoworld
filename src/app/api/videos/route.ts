@@ -34,7 +34,7 @@ export async function POST(request: NextRequest) {
     if (
       !body.title ||
       !body.description ||
-      !body.thumbnailUrl ||
+      // !body.thumbnailUrl ||
       !body.videoUrl
     ) {
       return NextResponse.json(
@@ -45,11 +45,11 @@ export async function POST(request: NextRequest) {
     const videoData = {
       ...body,
       controls: body?.controls ?? true,
-      transformation: {
-        height: 1980,
-        width: 1080,
-        quality: body.transformation?.quality ?? 100,
-      },
+      // transformation: {
+      //   height: 1980,
+      //   width: 1080,
+      //   quality: body.transformation?.quality ?? 100,
+      // },
     };
     const newVideo = await Video.create(videoData);
     return NextResponse.json(newVideo);

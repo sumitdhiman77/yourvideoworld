@@ -3,61 +3,54 @@
 import { useEffect, useRef } from "react";
 import videojs from "video.js";
 import "video.js/dist/video-js.css";
-import "videojs-contrib-quality-levels";
-import "videojs-http-source-selector";
 
-// Explicitly register the plugin
-
-// Define a consistent type for the player instance.
-// This ensures the type is correctly derived from the `videojs` function itself.
 type PlayerInstance = ReturnType<typeof videojs>;
 
 export default function VideoPlayer({
   videoUrl,
-  poster,
 }: {
   videoUrl: string;
   poster: string;
 }) {
   const videoRef = useRef<HTMLVideoElement | null>(null);
-  // Use the newly defined PlayerInstance type for the ref
   const playerRef = useRef<PlayerInstance | null>(null);
 
   useEffect(() => {
     if (videoRef.current && !playerRef.current) {
-      const player = videojs(videoRef.current, {
+      playerRef.current = videojs(videoRef.current, {
         controls: true,
         autoplay: false,
-        preload: "auto",
+        preload: "metadata",
         fluid: true,
-        // plugins: {
-        //   httpSourceSelector: { default: "auto" },
-        // },
+        responsive: true,
       });
-
-      // The player variable is now correctly typed as PlayerInstance
-      playerRef.current = player;
     }
 
     return () => {
-      if (playerRef.current) {
-        playerRef.current.dispose();
-        playerRef.current = null;
-      }
+      playerRef.current?.dispose();
+      playerRef.current = null;
     };
   }, []);
 
   return (
-    <div className="pt-0" data-vjs-player>
+    <div
+      data-vjs-player
+      className="
+        relative w-full
+         sm:aspect-video
+        bg-black rounded-xl overflow-hidden aspect-[9/16]
+        max-h-[70vh] sm:max-h-none
+      "
+    >
       <video
         ref={videoRef}
-        className="video-js vjs-big-play-centered w-full rounded-lg"
-        poster={poster}
+        className="
+          video-js vjs-default-skin vjs-big-play-centered
+          absolute inset-0 w-full h-full
+        "
+        playsInline
       >
-        <source
-          src={`${videoUrl}/ik-master.m3u8?tr=sr-240_360_480_720`}
-          type="application/x-mpegURL"
-        />
+        <source src={videoUrl} type="video/mp4" />
       </video>
     </div>
   );

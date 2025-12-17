@@ -28,13 +28,13 @@ export default function Register() {
 
       const data = await res.json();
       if (!res.ok) {
-        throw new Error(data.error || "Registration failed");
+        throw new Error(data.error);
       }
       alert(data.message);
       router.push("/login");
     } catch (error) {
       console.error(error);
-      alert("Registration failed. Please try again.");
+      alert(error);
     } finally {
       setLoading(false);
     }
