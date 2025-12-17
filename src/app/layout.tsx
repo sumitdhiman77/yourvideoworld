@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "your video world",
+  title: "weTube",
   description: "Upload your video & show to the World",
 };
 
