@@ -14,7 +14,14 @@ class ApiClient {
     options: FetchOptions = {}
   ): Promise<T> {
     const { method = "GET", body, headers = {} } = options;
-    const response = await fetch(`/api/${endpoint}`, {
+    // Check if we are running on the server (process.env is available there)
+    // We use a full URL for the server component fetch,
+    // but default to a relative path for client component fetches (like in the Navbar)
+    const baseUrl =
+      typeof window === "undefined" ? process.env.NEXT_PUBLIC_APP_URL : ""; // Empty string means relative path is used
+
+    const fullUrl = `${baseUrl}/api/${endpoint}`;
+    const response = await fetch(fullUrl, {
       method,
       headers: {
         ...(body ? { "Content-Type": "application/json" } : {}),
