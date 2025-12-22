@@ -18,10 +18,6 @@ declare module "video.js" {
     qualityLevels?: () => any;
   }
 }
-/* Existing mongoose + video.js augmentations above … */
-
-// Tell TS this module exists
-// Declare missing module for TS
 declare module "videojs-http-source-selector" {
   const plugin: any;
   export default plugin;

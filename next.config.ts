@@ -8,7 +8,7 @@ export const nextConfig: NextConfig = {
     },
   },
   api: {
-    bodyParser: false, // Disabling bodyParser is necessary for manual formData handling in some environments
+    bodyParser: false,
   },
 };
 

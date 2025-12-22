@@ -44,15 +44,12 @@ export default function FileUpload({
     try {
       const formData = new FormData();
       formData.append("video", file);
-      console.log(formData);
-      console.log(file.name, file.type, file.size);
 
       const response = await fetch("/api/upload/video", {
         method: "POST",
         body: formData,
         credentials: "include",
       });
-      console.log(response);
 
       if (!response.ok) {
         const errorData = await response.json();
