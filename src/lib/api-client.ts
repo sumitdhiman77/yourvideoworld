@@ -1,4 +1,3 @@
-import { env } from "process";
 import { IVideo } from "../models/Video";
 
 export type VideoFormData = Omit<IVideo, "_id">;
@@ -15,8 +14,7 @@ class ApiClient {
     options: FetchOptions = {}
   ): Promise<T> {
     const { method = "GET", body, headers = {} } = options;
-    const appUrl = env.NEXT_PUBLIC_APP_URL;
-    const response = await fetch(`${appUrl}/api/videos`, {
+    const response = await fetch(`/api/${endpoint}`, {
       method,
       headers: {
         ...(body ? { "Content-Type": "application/json" } : {}),
