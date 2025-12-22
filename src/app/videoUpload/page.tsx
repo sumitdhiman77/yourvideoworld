@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 import React, { useState } from "react";
 import FileUpload from "../components/FileUpload";
@@ -19,8 +18,25 @@ function VideoUploadForm() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const res = await apiClient.createVideo(videoData);
-    console.log(res);
+    setLoading(true);
+    try {
+      const res = await apiClient.createVideo(videoData);
+      console.log(res);
+      // 1. Reset all state variables to clear the form
+      setTitle("");
+      setDescription("");
+      setVideoUrl("");
+      setThumbnailUrl("");
+
+      // 2. Optional: Show success message
+      alert("Video uploaded successfully!");
+    } catch (error) {
+      console.error("Upload failed:", error);
+      alert("Failed to save video data");
+    } finally {
+      // 3. Always turn off loading, even if it fails
+      setLoading(false);
+    }
   };
 
   return (
@@ -29,7 +45,7 @@ function VideoUploadForm() {
         fileType="video"
         onSuccess={(res) => {
           console.log(res);
-          setVideoUrl((res as { url: string }).url);
+          setVideoUrl(res.videoUrl);
           // setThumbnailUrl(`${videoUrl}/ik-thumbnail.jpg`);
         }}
       />

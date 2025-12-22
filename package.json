@@ -9,9 +9,9 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@imagekit/next": "^2.1.2",
     "@types/bcryptjs": "^2.4.6",
     "bcryptjs": "^3.0.2",
+    "cloudinary": "^2.8.0",
     "hls.js": "^1.6.12",
     "mongoose": "^8.16.5",
     "next": "15.5.9",

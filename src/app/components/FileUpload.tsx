@@ -1,82 +1,86 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-"use client"; // This component must be a client component
+"use client";
 
-import {
-  ImageKitAbortError,
-  ImageKitInvalidRequestError,
-  ImageKitServerError,
-  ImageKitUploadNetworkError,
-  upload,
-} from "@imagekit/next";
-import { useRef, useState } from "react";
+import { FileUploadProps } from "../../../types";
+import { useState } from "react";
 
-interface FileUploadProps {
-  onSuccess: (res: unknown) => void;
-  onProgress?: (progress: number) => void;
-  fileType?: "image" | "video";
+interface UploadResult {
+  videoUrl: string;
+  publicId: string;
+  duration?: number;
 }
 
-const FileUpload = ({ onSuccess, onProgress, fileType }: FileUploadProps) => {
+const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB
+
+export default function FileUpload({
+  onSuccess,
+  fileType = "video",
+}: FileUploadProps) {
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  //optional validation
-  const validateFile = (file: File) => {
-    if (fileType === "video") {
-      if (!file.type.startsWith("video/")) {
-        setError("Please upload a valid video file");
-        return false;
-      }
-    }
-    if (file.size > 100 * 1024 * 1024) {
-      setError("File size must be less than 100 MB");
+  const validateFile = (file: File): boolean => {
+    if (fileType === "video" && !file.type.startsWith("video/")) {
+      setError("Please upload a valid video file");
       return false;
     }
+
+    if (file.size > MAX_FILE_SIZE) {
+      setError("File size must be less than 50 MB");
+      return false;
+    }
+
     return true;
   };
 
-  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
+  const handleFileChange = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = event.target.files?.[0];
     if (!file || !validateFile(file)) return;
+
     setUploading(true);
     setError(null);
 
     try {
-      const authRes = await fetch("/api/auth/imagekit-auth");
-      const { authenticationParameters, publickey } = await authRes.json();
-      console.log(authenticationParameters);
-      const res = await upload({
-        file,
-        fileName: file.name,
-        publicKey: process.env.NEXT_PUBLIC_PUBLIC_KEY!,
-        signature: authenticationParameters.signature,
-        expire: authenticationParameters.expire,
-        token: authenticationParameters.token,
-        onProgress: (event) => {
-          if (event.lengthComputable && onProgress) {
-            const percent = (event.loaded / event.total) * 100;
-            onProgress(Math.round(percent));
-          }
-        },
+      const formData = new FormData();
+      formData.append("video", file);
+      console.log(formData);
+      console.log(file.name, file.type, file.size);
+
+      const response = await fetch("/api/upload/video", {
+        method: "POST",
+        body: formData,
+        credentials: "include",
       });
-      onSuccess(res);
-    } catch (error) {
-      console.error("Upload failed", error);
+      console.log(response);
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Upload failed");
+      }
+
+      const result = (await response.json()) as UploadResult;
+      onSuccess(result);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (err: any) {
+      console.error("Video upload failed", err);
+      setError(err.message || "Video upload failed");
     } finally {
       setUploading(false);
     }
   };
 
   return (
-    <>
+    <div>
       <input
         type="file"
         accept={fileType === "video" ? "video/*" : "image/*"}
         onChange={handleFileChange}
+        disabled={uploading}
       />
-      {uploading && <span>Loading....</span>}
-    </>
-  );
-};
 
-export default FileUpload;
+      {uploading && <p>Uploading...</p>}
+      {error && <p style={{ color: "red" }}>{error}</p>}
+    </div>
+  );
+}

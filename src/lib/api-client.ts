@@ -15,14 +15,14 @@ class ApiClient {
   ): Promise<T> {
     const { method = "GET", body, headers = {} } = options;
 
-    const response = await fetch(`/${endpoint}`, {
+    const response = await fetch("http://localhost:3000/api/videos", {
       method,
       headers: {
-        "Content-Type": "application/json",
+        ...(body ? { "Content-Type": "application/json" } : {}),
         ...headers,
       },
       body: body ? JSON.stringify(body) : undefined,
-      credentials: "include", // 🔥 REQUIRED for auth
+      credentials: "include", // 🔒 required for NextAuth
     });
 
     if (!response.ok) {
@@ -32,12 +32,14 @@ class ApiClient {
     return response.json();
   }
 
+  // GET /api/videos
   async getVideos(): Promise<IVideo[]> {
-    return this.fetch("api/videos");
+    return this.fetch("videos");
   }
 
+  // POST /api/videos
   async createVideo(videoData: VideoFormData): Promise<IVideo> {
-    return this.fetch("api/videos", {
+    return this.fetch("videos", {
       method: "POST",
       body: videoData,
     });

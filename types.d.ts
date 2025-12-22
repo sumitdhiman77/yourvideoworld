@@ -38,4 +38,10 @@ export interface IVideo {
   videoUrl: string;
 }
 
+export interface FileUploadProps {
+  onSuccess: (res: UploadResult) => void;
+  onProgress?: (progress: number) => void; // kept for future use
+  fileType?: "image" | "video";
+}
+
 export {};
