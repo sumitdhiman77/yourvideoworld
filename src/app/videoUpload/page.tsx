@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import FileUpload from "../components/FileUpload";
 import { apiClient } from "@/lib/api-client";
+import { toast } from "sonner";
 
 function VideoUploadForm() {
   const [title, setTitle] = useState("");
@@ -17,7 +18,7 @@ function VideoUploadForm() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!videoUrl) return alert("Please upload a video first");
+    if (!videoUrl) return toast.error("Please upload a video first");
 
     setLoading(true);
     try {
@@ -33,10 +34,10 @@ function VideoUploadForm() {
       // 2. Increment the key to force the FileUpload component to wipe clean
       setResetKey((prev) => prev + 1);
 
-      alert("Video uploaded successfully!");
+      toast.success("Video uploaded successfully!");
     } catch (error) {
       console.error("Upload failed:", error);
-      alert("Failed to save video data");
+      toast.error("Failed to save video data");
     } finally {
       setLoading(false);
     }

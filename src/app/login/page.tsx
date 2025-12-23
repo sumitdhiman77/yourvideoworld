@@ -2,6 +2,7 @@
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
+import { toast } from "sonner";
 export default function Login() {
   const router = useRouter();
   const [email, setEmail] = useState("");
@@ -21,7 +22,7 @@ export default function Login() {
     setLoading(false);
 
     if (result?.error) {
-      alert(result.error);
+      toast.error(result.error);
     } else {
       router.push("/");
     }
